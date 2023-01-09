@@ -1,5 +1,5 @@
 {
-  "name": "@serverless/compose",
+  "name": "uac-serverless-compose",
   "version": "1.3.0",
   "description": "Deploy and orchestrate multiple Serverless Framework services in monorepositories.",
   "main": "src/index.js",

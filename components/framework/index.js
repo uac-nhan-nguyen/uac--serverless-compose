@@ -140,15 +140,16 @@ class ServerlessFramework {
   }
 
   async logs(options) {
-    const functions = await this.retrieveFunctions();
+    // if function is given in options, log only that function
+    const functions = options.function ? [options.function] : Object.keys(await this.retrieveFunctions());
     // Some services do not have functions, let's not start a progress when tailing
-    if (Object.keys(functions).length === 0) return;
+    if (functions.length === 0) return;
 
     if (options.tail) {
       this.context.startProgress('logs');
     }
 
-    const promises = Object.keys(functions).map(async (functionName) => {
+    const promises = functions.map(async (functionName) => {
       const args = ['logs', '--function', functionName];
       if (options.tail) {
         args.push('--tail');

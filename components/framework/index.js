@@ -149,6 +149,8 @@ class ServerlessFramework {
       this.context.startProgress('logs');
     }
 
+    console.log('Number of functions: ', functions.length);
+
     const promises = functions.map(async (functionName) => {
       const args = ['logs', '--function', functionName];
       if (options.tail) {

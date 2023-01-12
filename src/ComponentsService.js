@@ -245,7 +245,7 @@ class ComponentsService {
     this.componentsGraph = createGraph(this.allComponents);
   }
 
-  async deploy() {
+  async deploy(options) {
     this.context.output.log();
     this.context.output.log(`Deploying to stage ${this.context.stage}`);
 
@@ -254,7 +254,7 @@ class ComponentsService {
       this.context.progresses.add(componentName);
     });
 
-    await this.executeComponentsGraph({ method: 'deploy', reverse: false });
+    await this.executeComponentsGraph({ method: 'deploy', reverse: false, options });
 
     // Resolve the status of components that were not deployed
     Object.keys(this.allComponents).forEach((componentName) => {
@@ -479,10 +479,10 @@ class ComponentsService {
 
   /**
    * @private
-   * @param {{method: string, reverse?: boolean}} _
+   * @param {{method: string, reverse?: boolean, options?}} _
    * @return {Promise<void>}
    */
-  async executeComponentsGraph({ method, reverse }) {
+  async executeComponentsGraph({ method, reverse, options }) {
     let nodes;
     if (reverse) {
       nodes = this.componentsGraph.sources();
@@ -523,7 +523,7 @@ class ComponentsService {
             );
           }
 
-          await component[method]();
+          await component[method](options);
           this.context.componentCommandsOutcomes[alias] = 'success';
 
           return true;
@@ -553,7 +553,7 @@ class ComponentsService {
       this.componentsGraph.removeNode(alias);
     }
 
-    await this.executeComponentsGraph({ method, reverse });
+    await this.executeComponentsGraph({ method, reverse, options });
   }
 
   async instantiateComponents() {

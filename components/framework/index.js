@@ -68,6 +68,7 @@ class ServerlessFramework {
   }
 
   async deploy(options) {
+    // console.log({options, context: this.context, inputs: this.inputs})
     this.context.startProgress('deploying');
 
     if (this.inputs.skip && !options?.noSkip){

@@ -78,26 +78,20 @@ class ServerlessFramework {
         JSON.stringify(this.inputs) === JSON.stringify(this.context.state.inputs) &&
         cacheHash === this.context.state.cacheHash;
       if (hasNoChanges) {
-        this.context.successProgress('no changes (1)');
+        this.context.successProgress('no changes');
         return;
       }
       this.context.updateProgress('deploying');
     }
 
     const { stderr: deployOutput } = await this.exec('serverless', ['deploy']);
-    const hasChanges = !deployOutput.includes('No changes to deploy. Deployment skipped.');
-
-    if (!hasChanges) {
-      // force update configuration because httpapi routes may have been deleted
-      await this.exec('serverless', ['deploy', '--update-config']);
-    }
 
     const hasOutputs = this.context.outputs && Object.keys(this.context.outputs).length > 0;
+    const hasChanges = !deployOutput.includes('No changes to deploy. Deployment skipped.');
     // Skip retrieving outputs via `sls info` if we already have outputs (faster)
     if (hasChanges || !hasOutputs) {
       await this.context.updateOutputs(await this.retrieveOutputs());
     }
-
 
     // Save state
     if (this.inputs.cachePatterns) {
@@ -109,7 +103,7 @@ class ServerlessFramework {
     if (hasChanges) {
       this.context.successProgress('deployed');
     } else {
-      this.context.successProgress('no changes (2)');
+      this.context.successProgress('no changes');
     }
   }
 

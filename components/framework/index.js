@@ -67,8 +67,14 @@ class ServerlessFramework {
     return await this.exec('serverless', args, true);
   }
 
-  async deploy() {
+  async deploy(options) {
     this.context.startProgress('deploying');
+
+    if (this.inputs.skip && !options.noSkip){
+      this.context.successProgress('skipped');
+      return;
+    }
+
 
     let cacheHash;
     if (this.inputs.cachePatterns) {

@@ -70,7 +70,7 @@ class ServerlessFramework {
   async deploy(options) {
     this.context.startProgress('deploying');
 
-    if (this.inputs.skip && !options.noSkip){
+    if (this.inputs.skip && !options?.noSkip){
       this.context.successProgress('skipped');
       return;
     }

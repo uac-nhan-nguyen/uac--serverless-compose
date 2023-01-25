@@ -265,7 +265,7 @@ class ComponentsService {
     });
   }
 
-  async remove() {
+  async remove(options) {
     this.context.output.log();
     this.context.output.log(`Removing stage ${this.context.stage}`);
 
@@ -274,7 +274,7 @@ class ComponentsService {
       this.context.progresses.add(componentName);
     });
 
-    await this.executeComponentsGraph({ method: 'remove', reverse: true });
+    await this.executeComponentsGraph({ method: 'remove', reverse: true, options });
     await this.context.stateStorage.removeState();
 
     // Resolve the status of components that were not removed

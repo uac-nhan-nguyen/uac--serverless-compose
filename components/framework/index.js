@@ -114,8 +114,14 @@ class ServerlessFramework {
     }
   }
 
-  async remove() {
+  async remove(options) {
     this.context.startProgress('removing');
+
+    if (this.inputs.skip && !options?.noSkip){
+      this.context.successProgress('skipped');
+      return;
+    }
+
 
     await this.exec('serverless', ['remove']);
     this.context.state = {};

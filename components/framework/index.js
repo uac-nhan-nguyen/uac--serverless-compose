@@ -85,7 +85,7 @@ class ServerlessFramework {
         JSON.stringify(this.inputs) === JSON.stringify(this.context.state.inputs) &&
         cacheHash === this.context.state.cacheHash;
       if (hasNoChanges) {
-        this.context.successProgress('no changes');
+        this.context.successProgress('no changes (0)');
         return;
       }
       this.context.updateProgress('deploying');
@@ -110,7 +110,7 @@ class ServerlessFramework {
     if (hasChanges) {
       this.context.successProgress('deployed');
     } else {
-      this.context.successProgress('no changes');
+      this.context.successProgress('no changes (1)');
     }
   }
 

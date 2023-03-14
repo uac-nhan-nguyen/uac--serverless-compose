@@ -236,8 +236,17 @@ class ComponentsService {
     this.componentsGraph = null;
   }
 
-  async init() {
+  async init(filterComponents) {
     const allComponents = await getAllComponents(this.configuration);
+
+    if (filterComponents){
+      Object.keys(allComponents).forEach((key) => {
+        if (!filterComponents.includes(key)) {
+          delete allComponents[key]
+        }
+      })
+    }
+
     await validateComponents(allComponents);
     this.allComponents = setDependencies(allComponents);
 

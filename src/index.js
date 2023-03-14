@@ -24,6 +24,7 @@ let options;
 let method;
 let configurationForTelemetry;
 let componentName;
+let multipleComponents;
 let context;
 let optionsForTelemetry;
 
@@ -92,7 +93,13 @@ const runComponents = async () => {
   optionsForTelemetry = clone(args);
 
   if (options.service) {
-    componentName = options.service;
+    const multiple = options.service.split(',');
+    if (multiple.length > 1){
+      multipleComponents = multiple;
+    }
+    else {
+      componentName = options.service;
+    }
     delete options.service;
   } else if (method.includes(':')) {
     let methods;
@@ -126,13 +133,19 @@ const runComponents = async () => {
 
   try {
     const componentsService = new ComponentsService(context, configuration, options);
-    await componentsService.init();
 
     // Additionally, we're raising the listener default limit by 1 for each component - we might revisit it in the future
     if (componentName) {
+      await componentsService.init();
       process.setMaxListeners(process.getMaxListeners() + 1);
       await componentsService.invokeComponentCommand(componentName, method, options);
+    } else if (multipleComponents) {
+      await componentsService.init(multipleComponents);
+      const numOfComponents = multipleComponents.length;
+      process.setMaxListeners(process.getMaxListeners() + numOfComponents);
+      await componentsService.invokeGlobalCommand(method, options, multipleComponents);
     } else {
+      await componentsService.init();
       const numOfComponents = Object.keys(componentsService.allComponents).length;
       process.setMaxListeners(process.getMaxListeners() + numOfComponents);
       await componentsService.invokeGlobalCommand(method, options);
